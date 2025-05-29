@@ -1,0 +1,105 @@
+<!-- Christian Anthony Hermawan - 2472008 
+    Username: user@gmail.com
+    Password: ukm12345*
+
+    Tidak perlu menghilangkan catatan ini untuk alasan keamanan karena tetap tidak aman
+-->
+
+<!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login - 2472008 - Login Page</title>
+
+        <style>
+            html, body {
+                margin: 0;
+                background-color:dodgerblue;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            * {
+                box-sizing: border-box;
+            }
+
+            .login-box {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                background-color: white;
+                text-align: center;
+                width: 400px;
+                padding: 25px 40px 25px 40px;
+                transform: translate(-50%, -50%);
+                border-radius: 10px;
+            }
+            .login-box > p {
+                margin-top: 5px;
+                margin-bottom: 15px;
+                font-size: 25px;
+            }
+            .login-box > form > label {
+                display: inline-block;
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }
+            .input-field {
+                width: 100%;
+                height: 30px;
+            }
+            .login-btn {
+                background-color: dodgerblue;
+                width: 100%;
+                margin-top: 15px;
+                border: none;
+                border-radius: 5px;
+                height: 30px;
+                color: white;
+            }
+
+        </style>
+    </head>
+    <body onload="begin()">
+        <div class="login-box">
+            <p>Login<p>
+            <form name="login-form">
+                <label for="email"><b>Email</b></label><br>
+                <input type="email" placeholder="Masukkan email" class="input-field" name="email" id="email"><br>
+                <label for="password"><b>Password</b></label><br>
+                <input type="password" placeholder="Masukkan password" class="input-field" name="password" id="password"><br>
+                <input type="button" value="Login" class="login-btn" id="login-btn" onclick="login()">
+                <p id="message" style="color: red; text-align: left;"></p>
+            </form>
+        </div>
+
+        <script>
+            function login() {
+                let email = document.forms["login-form"]["email"].value;
+                let passkey = document.forms["login-form"]["password"].value;
+
+                if(email != "" && passkey != "") {
+                    if(email == "user@gmail.com" && passkey == "ukm12345*") {
+                        localStorage.setItem("username","Tung Tung Tung Tung Sahur")
+                        window.location.href="dashboard.html";
+                    }
+                    else {
+                        document.getElementById("message").innerHTML = "Email atau password salah."
+                    }
+                }
+                else {
+                    document.getElementById("message").innerHTML = "Silahkan isi semua field"
+                }
+            }
+
+            function begin() {
+                if(localStorage.getItem("username") != null) {
+                    document.getElementById("message").innerHTML = "<b>Anda sudah login!</b> akan redirect dalam 3 detik"
+                    document.getElementById("message").style.color = "green"
+                    setTimeout(function() {
+                        window.location.href="dashboard.html";
+                    }, 3000);
+                        
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,249 @@
+<!-- Christian Anthony Hermawan - 2472008 
+    Username: user@gmail.com
+    Password: ukm12345*
+-->
+
+<!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login - 2472008 - Dashboard</title>
+
+        <style>
+            html, body {
+                margin: 0;
+                background-color: #f4f6f8;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            * {
+                box-sizing: border-box;
+            }
+
+            .content {
+                width: 60%;
+                margin: auto;
+                margin-top: 60px;
+            }
+            .container {
+                background-color: white;
+                width: 100%;
+                border-radius: 14px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+            .button {
+                background-color: #27ae60;
+                margin-top: 15px;
+                border: none;
+                border-radius: 5px;
+                color: white;
+                padding: 10px;
+            }
+            .warning {
+                background-color: #f39c12;
+                margin-right: 10px;
+            }
+            .danger {
+                background-color: #e74c3c;
+            }
+            
+            .input-field {
+                padding: 8px;
+                width: 32%;
+                border: 1px solid gray;;
+                border-radius: 8px;
+            }
+            .text-field {
+                margin-top: 12px;
+                width: 100%;
+                border-radius: 8px;
+            }
+
+            .crud-table {
+                border-collapse: collapse;
+                width: 100%;
+                border-radius: 0 0 8px 8px;
+                background-color: white;
+            }
+            .crud-table table, tr, th, td {
+                padding: 10px;
+            }
+            .crud-table th {
+                background-color: #2980b9;
+                color: white;
+            }
+
+        </style>
+    </head>
+    <body onload="begin()">
+        <div class="content">
+            <div class="container">
+                <form name="crud-form">
+                    <div style="display: flex; justify-content:space-between;">
+                        <input type="text" placeholder="Nama Produk" name="product" class="input-field">
+                        <input type="text" placeholder="Harga (Rp)" name="price" class="input-field">
+                        <input type="text" placeholder="Stok" name="stock" class="input-field">
+                        <input type="hidden" name="id">
+                    </div>
+                    <textarea name="desc" placeholder="Deskripsi Produk" class="text-field" rows="4"></textarea>
+                    <div style="text-align: right;">
+                        <input type="button" value="Tambah Produk" class="button" onclick="addProduct()" name="submit-btn">
+                    </div>
+                </form>
+            </div>
+
+            <div>
+                <table class="crud-table" id="dataDisplay">
+
+                </table>
+            </div>
+        </div>
+
+        <script>
+            function addProduct() {
+                let product = document.forms["crud-form"]["product"].value;
+                let price = document.forms["crud-form"]["price"].value;
+                let stock = document.forms["crud-form"]["stock"].value;
+                let desc = document.forms["crud-form"]["desc"].value;
+                let id = document.forms["crud-form"]["id"].value;
+
+                dataObj = {
+                    product: product,
+                    price: price,
+                    stock: stock,
+                    desc: desc
+                };
+                
+                // generate ID if no editing ID specified
+                if(id == null || id == "") {
+                    id = generateId();
+                }
+
+                // Write data to localStorage with ID determined
+                jsonStr= JSON.stringify(dataObj);
+                updateProduct(id, jsonStr);
+            }
+
+            function oldGenerateId() {
+                if(localStorage.getItem("lastId") != null) {
+                    id = parseInt(localStorage.getItem("lastId")) + 1
+                    localStorage.setItem("lastId", id)
+                }
+                else {
+                    id = 1
+                    localStorage.setItem("lastId", id)
+                }
+                return id
+            }
+
+            function generateId() {
+                if(localStorage.getItem("lastId") != null) {
+                    id = parseInt(localStorage.getItem("lastId")) + 1
+                    localStorage.setItem("lastId", id)
+                    //find empty spot
+                    let found = false;
+                    for (let i = 1; i <= localStorage.getItem("lastId") && found==false; i++) {
+                        if(localStorage.getItem(i) == null) {
+                            id = i
+                            found = true
+                        }
+                    }
+                }
+                else {
+                    id = 1
+                    localStorage.setItem("lastId", id)
+                }
+
+                // data cleansing
+                cleansing();
+
+                return id
+            }
+
+            function updateProduct(id, jsonStr) {
+                localStorage.setItem(id, jsonStr);
+                resetForm();
+                renderTable();
+            }
+
+            function resetForm() {
+                document.forms["crud-form"]["product"].value = "";
+                document.forms["crud-form"]["price"].value = "";
+                document.forms["crud-form"]["stock"].value = "";
+                document.forms["crud-form"]["desc"].value = "";
+                document.forms["crud-form"]["id"].value = "";
+                document.forms["crud-form"]["submit-btn"].value = "Tambah Produk";
+            }
+
+            function renderTable() {
+                // reset all table
+                document.getElementById("dataDisplay").innerHTML = '<tr>' +
+                        '<th style="border-radius: 8px 0 0 0;">ID</th>' +
+                        '<th>Nama Produk</th>' +
+                        '<th>Harga</th>' +
+                        '<th>Deskripsi</th>' +
+                        '<th>Stok</th>' +
+                        '<th style="border-radius: 0 8px 0 0;">Aksi</th>' +
+                    '</tr>';
+                
+                // insert data to table
+                if(localStorage.getItem("lastId") == null) {
+                    document.getElementById("dataDisplay").innerHTML += '<tr>' +
+                        '<td colspan="6" style="text-align: center; color:gray;">Tidak ada produk</td>' +
+                    '</tr>';
+                }
+                else {
+                    for(let i = 1; i <= localStorage.getItem("lastId"); i++) {
+                        // only render if id not empty
+                        if(localStorage.getItem(i) != null) {
+                            dataObj = JSON.parse(localStorage.getItem(i));
+
+                            document.getElementById("dataDisplay").innerHTML += '<tr>' +
+                                '<td>' + i + '</td>' +
+                                '<td>' + dataObj.product + '</td>' +
+                                '<td>' + dataObj.price + '</td>' +
+                                '<td>' + dataObj.desc + '</td>' +
+                                '<td>' + dataObj.stock + '</td>' +
+                                '<td><button onclick="editProduct('+ i +')" class="button warning">Edit</button><button onclick="deleteProduct(' + i + ')" class="button danger">Hapus</button></td>' +
+                            '</tr>';
+                        }
+                    }
+                }
+            }
+
+            function deleteProduct(id) {
+                if(confirm("Apakah anda yakin ingin menghapus produk ini?")) {
+                    localStorage.removeItem(id);
+                }
+                renderTable();
+                cleansing();
+            }
+
+            function editProduct(id) {
+                dataObj = JSON.parse(localStorage.getItem(id));
+
+                document.forms["crud-form"]["product"].value = dataObj.product;
+                document.forms["crud-form"]["price"].value = dataObj.price;
+                document.forms["crud-form"]["stock"].value = dataObj.stock;
+                document.forms["crud-form"]["desc"].value = dataObj.desc;
+                document.forms["crud-form"]["id"].value = id;
+                document.forms["crud-form"]["submit-btn"].value = "Update Produk";
+            }
+
+            function cleansing() {
+                let empty = true;
+                for (let i = localStorage.getItem("lastId"); i > 0 && empty==true; i--) {
+                    if(localStorage.getItem(i) != null) {
+                        let cleansing = i+1
+                        empty = false;
+                        localStorage.setItem("lastId", cleansing)
+                    }
+                }
+            }
+
+            function begin() {
+                renderTable();
+            }
+        </script>
+    </body>
+</html>

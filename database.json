@@ -1,0 +1,8 @@
+{
+    "totalJual":"Rp 10.000.001",
+    "jProduk":500,
+    "tKunjungan":"2,000",
+    "image":["img/kaos.jpeg", "img/topi.jpeg", "img/sandal.webp"],
+    "product":["Kaos Nyaman", "Topi Keren", "Sandal Empuk"],
+    "desc":["Kaos yang nyaman dipakai", "Topi yang keren dipakai", "Sendalyang empuk dipakai"]
+}
